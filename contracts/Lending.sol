@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 /**
  * @title Borrowing and Lending Smart Contract
  */
@@ -39,8 +39,8 @@ contract LendingPlatform is Ownable, ReentrancyGuard {
         address _tokenAddress,
         uint256 _baseInterestRate,
         uint256 _interestRatePerDuration,
-        uint256 _minDuration
-    ) {
+        uint256 _minDuration  
+    ) Ownable(msg.sender) {
         require(_tokenAddress != address(0), "Token address cannot be zero");
         require(_baseInterestRate > 0, "Base interest rate must be greater than zero");
         require(_interestRatePerDuration > 0, "Interest rate per duration must be greater than zero");
@@ -91,7 +91,9 @@ contract LendingPlatform is Ownable, ReentrancyGuard {
         token.safeTransferFrom(msg.sender, address(this), _amount);
 
         // Update borrowed amounts
-        borrowedAmounts[msg.sender] = borrowedAmounts[msg.sender].sub(_amount, "Repayment exceeds borrowed amount");
+        borrowedAmounts[msg.sender] = borrowedAmounts[msg.sender].sub(_amount);
+        //@audit check for if else argument.
+        
 
         // Emit event
         emit Repay(msg.sender, _amount);

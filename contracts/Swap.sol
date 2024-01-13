@@ -2,19 +2,18 @@
 
 pragma solidity >=0.8.0 <0.8.21;
 
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Token is ERC20, ERC20Mintable {
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {}
+contract Token is ERC20, Ownable {
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) Ownable(msg.sender) {}
 
-    // You don't need to override the mint function; it's already implemented in ERC20Mintable.
-    // You don't need to write a custom transfer function as it is already imported in the ERC20 contract.
+    function mint(address account, uint256 amount) external onlyOwner {
+        _mint(account, amount);
+    }
 }
 
 contract TokenSwap is Ownable, ReentrancyGuard {
@@ -34,7 +33,7 @@ contract TokenSwap is Ownable, ReentrancyGuard {
         _;
     }
 
-    constructor(address _admin, address _token1, address _token2, uint256 _fairExchangeRate) {
+    constructor(address _admin, address _token1, address _token2, uint256 _fairExchangeRate) Ownable(_admin) {
         admin = _admin;
         token1 = IERC20(_token1);
         token2 = IERC20(_token2);

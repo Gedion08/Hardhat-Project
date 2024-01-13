@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
 /**
@@ -103,22 +104,23 @@ contract StakingPool is Ownable, ReentrancyGuard {
         }
     }
 
-    /**
-     * @dev Function to update the reward balance of a user based on elapsed time
-     * @param account User's 
-     */
-    function updateReward(address account) internal {
-        // Function logic that involves using 'account'
-        // ...
+   /**
+ * @dev Update the reward for a given account.
+ * @param account The address of the account for which the reward is updated.
+ */
+function updateReward(address account) internal {
+    // Function logic that doesn't use 'account'
+    // ...
 
-        if (block.timestamp > lastRewardTimestamp) {
-            uint256 elapsedSeconds = block.timestamp - lastRewardTimestamp;
-            uint256 reward = totalStaked * elapsedSeconds * rewardRate;
+    if (block.timestamp > lastRewardTimestamp) {
+        uint256 elapsedSeconds = block.timestamp - lastRewardTimestamp;
+        uint256 reward = totalStaked * elapsedSeconds * rewardRate;
 
-            stakingToken.transferFrom(owner(), address(this), reward);
-            lastRewardTimestamp = block.timestamp;
-        }
+        stakingToken.transferFrom(owner(), address(this), reward);
+        lastRewardTimestamp = block.timestamp;
     }
+}
+
 
     /**
      * @dev Function to calculate the pending reward for a user
